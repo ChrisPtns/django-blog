@@ -3,11 +3,54 @@
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block content %}
-  <h1>{{ post.title }}</h1>
-  <p class="date">
-    Published {{ post.publish }} by {{ post.author }}
-  </p>
-  {{ post.body|linebreaks }}
-  
-  <p><a href="{% url 'blog:post_list' %}">&laquo; Back to Blog</a></p>
+    <h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl mb-4">{{ post.title }}</h1>
+    <p class="text-sm text-gray-500 mb-8">
+        Published {{ post.publish|date:"F d, Y" }} by {{ post.author.username }}
+    </p>
+
+    <div class="prose prose-sm sm:prose-base lg:prose-lg text-gray-700">
+        {{ post.body|linebreaks }}
+    </div>
+
+    <div class="mt-8 pt-8 border-t border-gray-200">
+        <p class="text-sm text-gray-600">
+            <strong>Tags:</strong>
+            {% for tag in post.tags.all %}
+                <a href="{% url 'blog:post_list_by_tag' tag.slug %}" class="text-blue-600 hover:underline">{{ tag.name }}</a>{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </p>
+        <p class="mt-4">
+            <a href="{% url 'blog:post_share' post.id %}" class="text-sm font-semibold text-blue-600 hover:text-blue-500">Share this post via email</a>
+        </p>
+    </div>
+
+    <div class="mt-12">
+        <h3 class="text-xl font-bold mb-6">Comments ({{ comments.count }})</h3>
+        {% for comment in comments %}
+            <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                <p class="text-sm font-semibold text-gray-900">{{ comment.name }} said:</p>
+                <p class="text-xs text-gray-500 mb-2">on {{ comment.created|date:"F d, Y, h:i a" }}</p>
+                <div class="text-sm text-gray-700">{{ comment.body|linebreaks }}</div>
+            </div>
+        {% empty %}
+            <p class="text-sm text-gray-600 mb-6">There are no comments yet.</p>
+        {% endfor %}
+
+        <h3 class="text-lg font-bold mt-8 mb-4">Add a new comment</h3>
+        <form action="{% url 'blog:post_comment' post.id %}" method="post" class="space-y-4">
+            {% csrf_token %}
+            {% for field in form %}
+                <div>
+                    <label class="block text-sm font-medium leading-6 text-gray-900">{{ field.label_tag }}</label>
+                    <div class="mt-2">
+                        {{ field }}
+                    </div>
+                    {% if field.errors %}
+                        <p class="text-sm text-red-600">{{ field.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500">Submit Comment</button>
+        </form>
+    </div>
 {% endblock %}

@@ -1,42 +1,37 @@
-{% load static %}
-<!DOCTYPE html>
+<!doctype html>
 <html>
 <head>
-  <title>{% block title %}{% endblock %}</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f4;
-    }
-    #header {
-      background-color: #333;
-      color: #fff;
-      padding: 10px 20px;
-    }
-    #header a {
-      color: #fff;
-      text-decoration: none;
-      font-size: 24px;
-      font-weight: bold;
-    }
-    #content {
-      padding: 20px;
-      max-width: 800px;
-      margin: 20px auto;
-      background-color: #fff;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>{% block title %}Blog{% endblock %}</title>
 </head>
 <body>
-  <div id="header">
-    <a href="{% url 'blog:post_list' %}">My Blog</a>
-  </div>
-  <div id="content">
-    {% block content %}
-    {% endblock %}
-  </div>
+    <div class="bg-white py-12 sm:py-16">
+        <div class="mx-auto max-w-7xl px-6 lg:px-8">
+            <div class="mx-auto max-w-2xl">
+                <div class="flex justify-between items-center border-b pb-4 mb-8">
+                    <div>
+                        <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl"><a href="{% url 'blog:post_list' %}">From the blog</a></h2>
+                        <p class="mt-2 text-lg leading-8 text-gray-600">Lorem ipsum</p>
+                    </div>
+                    <div>
+                        {% if request.user.is_authenticated %}
+                            <span class="mr-4 text-sm text-gray-600">Hello, {{ request.user.username }}</span>
+                            <form action="{% url 'logout' %}" method="post" class="inline">
+                                {% csrf_token %}
+                                <button type="submit" class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Logout</button>
+                            </form>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Login</a>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
 </body>
 </html>

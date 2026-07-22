@@ -1,0 +1,27 @@
+{% extends "blog/base.html" %}
+
+{% block title %}Add a comment{% endblock %}
+
+{% block content %}
+    {% if comment %}
+        <h2 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl mb-4">Your comment has been added.</h2>
+        <p><a href="{{ post.get_absolute_url }}" class="text-blue-600 hover:underline">Back to the post</a></p>
+    {% else %}
+        <h2 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl mb-4">Add a new comment</h2>
+        <form method="post" class="space-y-4 max-w-md">
+            {% csrf_token %}
+            {% for field in form %}
+                <div>
+                    <label class="block text-sm font-medium leading-6 text-gray-900">{{ field.label_tag }}</label>
+                    <div class="mt-2">
+                        {{ field }}
+                    </div>
+                    {% if field.errors %}
+                        <p class="text-sm text-red-600">{{ field.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500">Add comment</button>
+        </form>
+    {% endif %}
+{% endblock %}

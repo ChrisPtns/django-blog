@@ -1,0 +1,29 @@
+{% extends "blog/base.html" %}
+
+{% block title %}Share a post{% endblock %}
+
+{% block content %}
+    {% if sent %}
+        <h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl mb-4">E-mail successfully sent</h1>
+        <p class="text-gray-700">
+            "{{ post.title }}" was successfully sent to {{ form.cleaned_data.to }}.
+        </p>
+    {% else %}
+        <h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl mb-4">Share "{{ post.title }}" by e-mail</h1>
+        <form method="post" class="space-y-4 max-w-md">
+            {% csrf_token %}
+            {% for field in form %}
+                <div>
+                    <label class="block text-sm font-medium leading-6 text-gray-900">{{ field.label_tag }}</label>
+                    <div class="mt-2">
+                        {{ field }}
+                    </div>
+                    {% if field.errors %}
+                        <p class="text-sm text-red-600">{{ field.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500">Send e-mail</button>
+        </form>
+    {% endif %}
+{% endblock %}
